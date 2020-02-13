@@ -737,6 +737,15 @@ class Telemetry:
         x, y, z = ros_telemetry.x, ros_telemetry.y, ros_telemetry.z
         if not math.isnan(x):
             return x, y, z, math.degrees(ros_telemetry.yaw), client.active_client.config.copter_frame_id
+        elif ros_telemetry.frame_id == "aruco_map":
+            try:
+                if rospy.get_param('/aruco_map/known_tilt')=='map':
+                    return 'NO_POS_ARUCO_FLOOR'
+                else:
+                    return 'NO_POS'
+            except KeyError as e:
+                rospy.logdebug(e)
+                return 'ERROR'
         return 'NO_POS'
 
     def update_telemetry_fast(self):
@@ -783,7 +792,7 @@ class Telemetry:
     def round_telemetry(self):
         round_list = ["battery", "start_position", "current_position"]
         for key in round_list:
-            if self.__dict__[key] not in [None, 'NO_POS', 'NO_FCU']:
+            if self.__dict__[key] not in [None, 'NO_POS', 'NO_FCU', 'NO_POS_ARUCO_FLOOR']:
                 self.__dict__[key] = [round(v, 2) if type(v) == float else v for v in self.__dict__[key]]
 
     def reset_telemetry_values(self):
