@@ -89,6 +89,8 @@ def check_selfcheck(item):
 def check_pos_status(item):
     if item == 'NO_POS':
         return False
+    elif item == 'NO_POS_ARUCO_FLOOR':
+        return True
     return not math.isnan(item[0])
 
 
@@ -176,7 +178,7 @@ class StatedCopterData(CopterData):
                 )
 
 def get_position(pos_array):
-    if pos_array[0] != 'nan' and pos_array != 'NO_POS':
+    if pos_array[0] != 'nan' and pos_array != 'NO_POS' and pos_array != 'NO_POS_ARUCO_FLOOR':
         pos = []
         for i in range(3):
             pos.append(pos_array[i])
